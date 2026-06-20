@@ -84,7 +84,16 @@ function BookingForm() {
     setFormData(prev => ({ ...prev, Passengers: newPassengers }));
   };
 
-  const handleSubmit = (e) => {
+  const getBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+    });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.SignatureBase64) {
       alert('กรุณาเซ็นชื่อก่อนส่งคำขอ');
@@ -97,6 +106,29 @@ function BookingForm() {
     
     setIsSubmitting(true);
     
+    // Prepare payload
+    const payloadData = { ...formData };
+    
+    // 1. Join passengers array to string
+    payloadData.Passengers = formData.Passengers.filter(p => p.trim() !== '').join(',');
+    
+    // 2. Convert attachment to base64 if exists
+    if (formData.Attachment) {
+      try {
+        const base64Str = await getBase64(formData.Attachment);
+        payloadData.AttachmentBase64 = base64Str;
+        payloadData.AttachmentName = formData.Attachment.name;
+        payloadData.AttachmentMimeType = formData.Attachment.type;
+      } catch (err) {
+        alert('เกิดข้อผิดพลาดในการอ่านไฟล์แนบ');
+        setIsSubmitting(false);
+        return;
+      }
+    }
+    
+    // Remove the File object from payload
+    delete payloadData.Attachment;
+    
     // URL ของ Web App รถตู้
     const scriptUrl = 'https://script.google.com/macros/s/AKfycbyc2ztHJk2OrY6miuLOzAHlOvPZRnWEoGEzBsxJJkmsrHPqm-A8O0eS3v1xgeGPJLOQCQ/exec';
     
@@ -107,7 +139,7 @@ function BookingForm() {
       },
       body: JSON.stringify({
         action: 'saveBooking',
-        data: formData
+        data: payloadData
       })
     })
     .then(res => res.json())

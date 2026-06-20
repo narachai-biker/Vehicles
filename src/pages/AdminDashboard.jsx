@@ -266,6 +266,7 @@ function AdminDashboard() {
                       <p className="text-muted mb-1"><strong>ผู้จอง:</strong> {b.BookerName} (โทร: {b.BookerPhone || '-'})</p>
                       <p className="text-muted mb-1"><strong>เรื่อง:</strong> {b.Subject}</p>
                       {b.LessPassengerReason && <p className="text-danger mb-1"><strong>เหตุผลคนไม่ถึง 3 คน:</strong> {b.LessPassengerReason}</p>}
+                      {b.RefDocUrl && <p className="mb-1"><a href={b.RefDocUrl} target="_blank" rel="noreferrer" style={{ color: '#3B82F6', textDecoration: 'underline' }}>📄 ดูเอกสารต้นเรื่อง/แนบ</a></p>}
                     </div>
                     <button type="button" onClick={() => handleDownloadPdf(b)} className="btn btn-outline" style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem', borderColor: '#3B82F6', color: '#3B82F6' }}>
                       <FileDown size={14} className="inline mr-1"/> ดราฟท์แบบฟอร์ม PDF
@@ -375,14 +376,17 @@ function AdminDashboard() {
                     <p className="text-muted text-sm mb-1">สถานะ: <strong className={b.Status === 'Approved' ? 'text-success' : b.Status === 'Cancelled' ? 'text-muted' : 'text-danger'}>{b.Status}</strong></p>
                     {b.Status === 'Approved' && <p className="text-muted text-sm mb-1"><strong>รถ:</strong> {b.VehicleReg} | <strong>คนขับ:</strong> {b.DriverName}</p>}
                     {b.Status === 'Rejected' && <p className="text-muted text-sm mb-1"><strong>เหตุผลที่ปฏิเสธ:</strong> {b.RejectReason}</p>}
+                    {b.RefDocUrl && <p className="text-sm mb-1"><a href={b.RefDocUrl} target="_blank" rel="noreferrer" style={{ color: '#3B82F6', textDecoration: 'underline' }}>📄 ดูเอกสารแนบ</a></p>}
                   </div>
-                  {b.Status === 'Approved' && (
+                  {(b.Status === 'Approved' || b.Status === 'Rejected') && (
                     <div className="flex gap-2 flex-col items-end">
                       <button onClick={() => handleDownloadPdf(b)} className="btn btn-primary text-sm" style={{ padding: '0.25rem 0.5rem' }}><FileDown size={14} className="inline mr-1"/> พิมพ์ใบขออนุญาต (PDF)</button>
-                      <div className="flex gap-2">
-                        <button onClick={() => setEditingId(editingId === b.BookingID ? null : b.BookingID)} className="btn btn-outline text-sm" style={{ padding: '0.25rem 0.5rem' }}><Edit size={14}/> แก้ไข/คืนรถ</button>
-                        <button onClick={() => handleCancel(b)} className="btn btn-outline text-danger text-sm" style={{ padding: '0.25rem 0.5rem', borderColor: 'var(--danger)' }}><Trash2 size={14}/> ยกเลิก</button>
-                      </div>
+                      {b.Status === 'Approved' && (
+                        <div className="flex gap-2 mt-2">
+                          <button onClick={() => setEditingId(editingId === b.BookingID ? null : b.BookingID)} className="btn btn-outline text-sm" style={{ padding: '0.25rem 0.5rem' }}><Edit size={14}/> แก้ไข/คืนรถ</button>
+                          <button onClick={() => handleCancel(b)} className="btn btn-outline text-danger text-sm" style={{ padding: '0.25rem 0.5rem', borderColor: 'var(--danger)' }}><Trash2 size={14}/> ยกเลิก</button>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

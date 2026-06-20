@@ -221,7 +221,7 @@ function CalendarView() {
             คิวรถวันที่ {format(selectedDate, 'd MMMM yyyy', { locale: th })}
           </h3>
           
-          {selectedDayTrips.length === 0 ? (
+          <div style={{ display: selectedDayTrips.length === 0 ? 'block' : 'none' }}>
             <div className="card text-center" style={{ padding: '3rem 1rem', border: '1px dashed var(--border-color)', boxShadow: 'none' }}>
               <div style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>
                 <Car size={48} style={{ margin: '0 auto', opacity: 0.3 }} />
@@ -229,7 +229,9 @@ function CalendarView() {
               <p className="text-muted">ไม่มีคิวจองรถในวันนี้</p>
               <p className="text-sm mt-2 text-primary">รถตู้ทุกคันว่างสำหรับจอง!</p>
             </div>
-          ) : (
+          </div>
+
+          <div style={{ display: selectedDayTrips.length > 0 ? 'block' : 'none' }}>
             <div className="grid gap-4">
               {selectedDayTrips.map(trip => {
                 let borderColor = vehicleColors[trip.van] || vehicleColors['default'];
@@ -287,7 +289,7 @@ function CalendarView() {
                 </div>
               )})}
             </div>
-          )}
+          </div>
         </div>
       </div>
       

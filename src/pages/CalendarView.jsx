@@ -25,10 +25,20 @@ const formatTime = (timeStr) => {
 
 const isMatchDate = (dateString, targetDateObj) => {
   if (!dateString) return false;
-  const dStr = dateString.split('T')[0];
-  const tzOffset = targetDateObj.getTimezoneOffset() * 60000;
-  const targetStr = (new Date(targetDateObj.getTime() - tzOffset)).toISOString().slice(0, 10);
-  return dStr === targetStr;
+  
+  let d;
+  const str = String(dateString);
+  if (str.includes('T')) {
+    d = new Date(str);
+  } else {
+    d = new Date(str.replace(/-/g, '/'));
+  }
+  
+  if (isNaN(d)) return false;
+  
+  return d.getFullYear() === targetDateObj.getFullYear() &&
+         d.getMonth() === targetDateObj.getMonth() &&
+         d.getDate() === targetDateObj.getDate();
 };
 
 function CalendarView() {
@@ -233,7 +243,7 @@ function CalendarView() {
 
           <div style={{ display: selectedDayTrips.length > 0 ? 'block' : 'none' }}>
             <div className="grid gap-4">
-              {selectedDayTrips.map(trip => {
+              {selectedDayTrips.map((trip, index) => {
                 let borderColor = vehicleColors[trip.van] || vehicleColors['default'];
                 let statusBadge = '';
                 
@@ -248,7 +258,7 @@ function CalendarView() {
                 }
 
                 return (
-                <div key={trip.id} className="card" draggable={false} style={{ padding: '1.5rem', border: `2px solid ${borderColor}`, userSelect: 'text' }}>
+                <div key={`${trip.id}-${index}`} className="card" draggable={false} style={{ padding: '1.5rem', border: `2px solid ${borderColor}`, userSelect: 'text' }}>
                   <div className="flex justify-between items-start mb-2">
                     <h4 style={{ margin: 0, color: borderColor, fontSize: '1.1rem' }}>
                        {trip.time} น.

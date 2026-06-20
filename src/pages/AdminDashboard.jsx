@@ -143,6 +143,25 @@ function AdminDashboard() {
     }
   };
 
+  const handleDownloadPdf = async (booking) => {
+    try {
+      alert('กำลังสร้างไฟล์ PDF กรุณารอสักครู่ (อาจใช้เวลาประมาณ 5-10 วินาที)...');
+      const res = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'exportPdf', data: booking })
+      }).then(r => r.json());
+      
+      if (res.status === 'success' && res.data && res.data.pdfUrl) {
+        window.open(res.data.pdfUrl, '_blank');
+      } else {
+        alert('เกิดข้อผิดพลาดในการสร้าง PDF: ' + (res.message || JSON.stringify(res)));
+      }
+    } catch (err) {
+      alert('ไม่สามารถติดต่อเซิร์ฟเวอร์ได้');
+    }
+  };
+
   const handleToggleVehicle = async (vehicle) => {
     const newStatus = vehicle.Status === 'Active' ? 'Maintenance' : 'Active';
     setVehicles(prev => prev.map(v => v.RegNumber === vehicle.RegNumber ? {...v, Status: newStatus} : v));
@@ -236,25 +255,6 @@ function AdminDashboard() {
                 return reqStartStr < abEndStr && reqEndStr > abStartStr;
               });
 
-              const handleDownloadPdf = async () => {
-                try {
-                  alert('กำลังสร้างไฟล์ PDF กรุณารอสักครู่...');
-                  const res = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ action: 'exportPdf', data: b })
-                  }).then(r => r.json());
-                  
-                  if (res.status === 'success' && res.data) {
-                    window.open(res.data, '_blank');
-                  } else {
-                    alert('เกิดข้อผิดพลาดในการสร้าง PDF: ' + res.message);
-                  }
-                } catch (err) {
-                  alert('ไม่สามารถติดต่อเซิร์ฟเวอร์ได้');
-                }
-              };
-
               return (
                 <div key={b.BookingID} className="card" style={{ borderLeft: '4px solid var(--warning)', marginBottom: '1.5rem', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
                   <div className="flex justify-between items-start mb-4">
@@ -267,8 +267,8 @@ function AdminDashboard() {
                       <p className="text-muted mb-1"><strong>เรื่อง:</strong> {b.Subject}</p>
                       {b.LessPassengerReason && <p className="text-danger mb-1"><strong>เหตุผลคนไม่ถึง 3 คน:</strong> {b.LessPassengerReason}</p>}
                     </div>
-                    <button type="button" onClick={handleDownloadPdf} className="btn btn-outline" style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem' }}>
-                      <FileDown size={14} className="inline mr-1"/> ดูใบขออนุญาต PDF
+                    <button type="button" onClick={() => handleDownloadPdf(b)} className="btn btn-outline" style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem', borderColor: '#3B82F6', color: '#3B82F6' }}>
+                      <FileDown size={14} className="inline mr-1"/> ดราฟท์แบบฟอร์ม PDF
                     </button>
                   </div>
 
@@ -377,9 +377,12 @@ function AdminDashboard() {
                     {b.Status === 'Rejected' && <p className="text-muted text-sm mb-1"><strong>เหตุผลที่ปฏิเสธ:</strong> {b.RejectReason}</p>}
                   </div>
                   {b.Status === 'Approved' && (
-                    <div className="flex gap-2">
-                      <button onClick={() => setEditingId(editingId === b.BookingID ? null : b.BookingID)} className="btn btn-outline text-sm" style={{ padding: '0.25rem 0.5rem' }}><Edit size={14}/> แก้ไข/คืนรถ</button>
-                      <button onClick={() => handleCancel(b)} className="btn btn-outline text-danger text-sm" style={{ padding: '0.25rem 0.5rem', borderColor: 'var(--danger)' }}><Trash2 size={14}/> ยกเลิก</button>
+                    <div className="flex gap-2 flex-col items-end">
+                      <button onClick={() => handleDownloadPdf(b)} className="btn btn-primary text-sm" style={{ padding: '0.25rem 0.5rem' }}><FileDown size={14} className="inline mr-1"/> พิมพ์ใบขออนุญาต (PDF)</button>
+                      <div className="flex gap-2">
+                        <button onClick={() => setEditingId(editingId === b.BookingID ? null : b.BookingID)} className="btn btn-outline text-sm" style={{ padding: '0.25rem 0.5rem' }}><Edit size={14}/> แก้ไข/คืนรถ</button>
+                        <button onClick={() => handleCancel(b)} className="btn btn-outline text-danger text-sm" style={{ padding: '0.25rem 0.5rem', borderColor: 'var(--danger)' }}><Trash2 size={14}/> ยกเลิก</button>
+                      </div>
                     </div>
                   )}
                 </div>

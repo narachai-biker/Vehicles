@@ -23,6 +23,14 @@ const formatTime = (timeStr) => {
   return timeStr;
 };
 
+const isMatchDate = (dateString, targetDateObj) => {
+  if (!dateString) return false;
+  const dStr = dateString.split('T')[0];
+  const tzOffset = targetDateObj.getTimezoneOffset() * 60000;
+  const targetStr = (new Date(targetDateObj.getTime() - tzOffset)).toISOString().slice(0, 10);
+  return dStr === targetStr;
+};
+
 function CalendarView() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -107,7 +115,7 @@ function CalendarView() {
         const cloneDay = day;
         
         // Find trips for this day to show dot indicators
-        const dayTrips = upcomingTrips.filter(t => isSameDay(parseISO(t.date), cloneDay));
+        const dayTrips = upcomingTrips.filter(t => isMatchDate(t.date, cloneDay));
         // Show car dots for all trips. Pending trips will use the default color.
         const uniqueVans = [...new Set(dayTrips.map(t => t.van))];
 
@@ -175,7 +183,7 @@ function CalendarView() {
     return <div>{rows}</div>;
   };
 
-  const selectedDayTrips = upcomingTrips.filter(t => isSameDay(parseISO(t.date), selectedDate));
+  const selectedDayTrips = upcomingTrips.filter(t => isMatchDate(t.date, selectedDate));
   selectedDayTrips.sort((a, b) => a.time.localeCompare(b.time)); // Sort by time
 
   return (
@@ -238,7 +246,7 @@ function CalendarView() {
                 }
 
                 return (
-                <div key={trip.id} className="card" style={{ padding: '1.5rem', border: `2px solid ${borderColor}` }}>
+                <div key={trip.id} className="card" draggable={false} style={{ padding: '1.5rem', border: `2px solid ${borderColor}`, userSelect: 'text' }}>
                   <div className="flex justify-between items-start mb-2">
                     <h4 style={{ margin: 0, color: borderColor, fontSize: '1.1rem' }}>
                        {trip.time} น.

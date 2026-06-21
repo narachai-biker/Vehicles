@@ -82,28 +82,28 @@ export default function PrintDocument() {
         </div>
 
         <div className="text-right mb-4" style={{ textAlign: 'right', marginBottom: '15px', paddingRight: '20px' }}>
-          เขียน วันที่ <span style={{ padding: '0 10px' }}>{formatThaiDateFull(data.CreatedDate || new Date().toISOString())}</span>
+          เขียน วันที่ <span>{formatThaiDateFull(data.CreatedDate || new Date().toISOString())}</span>
         </div>
 
         <div style={{ textIndent: '40px', textAlign: 'justify', marginBottom: '15px' }}>
-          ข้าพเจ้า <span style={{ borderBottom: '1px dotted #000', padding: '0 5px' }}>{data.BookerName || ''}</span> 
-          &nbsp;ตำแหน่ง <span style={{ borderBottom: '1px dotted #000', padding: '0 5px' }}>{data.BookerPosition || '.................................'}</span> 
-          &nbsp;ขออนุญาตใช้รถยนต์ไปราชการเรื่อง <span style={{ borderBottom: '1px dotted #000', padding: '0 5px' }}>{data.Subject || ''}</span>
-          &nbsp;สถานที่ <span style={{ borderBottom: '1px dotted #000', padding: '0 5px' }}>{data.Destination || ''}</span> 
-          &nbsp;อำเภอ <span style={{ borderBottom: '1px dotted #000', padding: '0 5px' }}>{data.Amphur || '.....................'}</span> 
-          &nbsp;จังหวัด <span style={{ borderBottom: '1px dotted #000', padding: '0 5px' }}>{data.Province || '.....................'}</span>
-          &nbsp;ตั้งแต่วันที่ <span style={{ borderBottom: '1px dotted #000', padding: '0 5px' }}>{formatThaiDateFull(data.StartDate)}</span> 
-          &nbsp;เวลา <span style={{ borderBottom: '1px dotted #000', padding: '0 5px' }}>{formatThaiTime(data.StartTime)} น.</span> 
-          &nbsp;และ/ถึง วันที่ <span style={{ borderBottom: '1px dotted #000', padding: '0 5px' }}>{formatThaiDateFull(data.EndDate)}</span> 
-          &nbsp;เวลา <span style={{ borderBottom: '1px dotted #000', padding: '0 5px' }}>{formatThaiTime(data.EndTime)} น.</span> 
-          &nbsp;รวมเวลาที่ขอใช้รถราชการจำนวน <span style={{ borderBottom: '1px dotted #000', padding: '0 5px' }}>{data.TotalDays !== undefined ? data.TotalDays : ''}</span> วัน
-          &nbsp;โดยมีผู้โดยสาร ข้าพเจ้าและบุคลากรทางการศึกษา จำนวนรวม <span style={{ borderBottom: '1px dotted #000', padding: '0 5px' }}>{data.TeacherCount !== undefined ? data.TeacherCount : '0'}</span> คน 
-          นักเรียนจำนวนรวม <span style={{ borderBottom: '1px dotted #000', padding: '0 5px' }}>{data.StudentCount !== undefined ? data.StudentCount : '0'}</span> คน มีรายชื่อดังต่อไปนี้
+          ข้าพเจ้า <span>{data.BookerName || ''}</span> 
+          &nbsp;ตำแหน่ง <span>{data.BookerPosition || '.................................'}</span> 
+          &nbsp;ขออนุญาตใช้รถยนต์ไปราชการเรื่อง <span>{data.Subject || ''}</span>
+          &nbsp;สถานที่ <span>{data.Destination || ''}</span> 
+          &nbsp;อำเภอ <span>{data.Amphur || '.....................'}</span> 
+          &nbsp;จังหวัด <span>{data.Province || '.....................'}</span>
+          &nbsp;ตั้งแต่วันที่ <span>{formatThaiDateFull(data.StartDate)}</span> 
+          &nbsp;เวลา <span>{formatThaiTime(data.StartTime)} น.</span> 
+          &nbsp;และ/ถึง วันที่ <span>{formatThaiDateFull(data.EndDate)}</span> 
+          &nbsp;เวลา <span>{formatThaiTime(data.EndTime)} น.</span> 
+          &nbsp;รวมเวลาที่ขอใช้รถราชการจำนวน <span>{data.TotalDays !== undefined ? data.TotalDays : ''}</span> วัน
+          &nbsp;โดยมีผู้โดยสาร ข้าพเจ้าและบุคลากรทางการศึกษา จำนวนรวม <span>{data.TeacherCount !== undefined ? data.TeacherCount : '0'}</span> คน 
+          นักเรียนจำนวนรวม <span>{data.StudentCount !== undefined ? data.StudentCount : '0'}</span> คน มีรายชื่อดังต่อไปนี้
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5px 20px', paddingLeft: '40px', marginBottom: '15px' }}>
           {[...Array(10)].map((_, i) => (
-            <div key={i}>{i + 1}. <span style={{ borderBottom: getPassengerName(i) ? '1px dotted #000' : 'none', display: 'inline-block', minWidth: '200px' }}>{getPassengerName(i)}</span></div>
+            <div key={i}>{i + 1}. <span style={{ display: 'inline-block', minWidth: '200px' }}>{getPassengerName(i)}</span></div>
           ))}
         </div>
 
@@ -123,14 +123,14 @@ export default function PrintDocument() {
                 )}
               </div>
             </div>
-            <div style={{ marginTop: '5px' }}>( <span style={{ padding: '0 5px' }}>{data.BookerName || '.......................................'}</span> )</div>
-            <div style={{ marginTop: '5px' }}>ผู้ขออนุญาติใช้รถ</div>
+            <div style={{ marginTop: '5px' }}>(<span>{data.BookerName || '.......................................'}</span>)</div>
+            <div style={{ marginTop: '5px' }}>ผู้ขออนุญาตใช้รถ</div>
           </div>
         </div>
 
         {data.LessPassengerReason && (
           <div style={{ marginBottom: '15px' }}>
-            กรณีมีผู้โดยสารไม่ถึง 3 คน มีความจำเป็นใช้รถเนื่องจาก <span style={{ borderBottom: '1px dotted #000', padding: '0 10px' }}>{data.LessPassengerReason}</span>
+            กรณีมีผู้โดยสารไม่ถึง 3 คน มีความจำเป็นใช้รถเนื่องจาก <span>{data.LessPassengerReason}</span>
           </div>
         )}
 
@@ -140,12 +140,12 @@ export default function PrintDocument() {
         <div style={{ marginBottom: '10px' }}>
           <div>ความเห็นของหัวหน้างาน/เจ้าหน้าที่งานยานพาหนะ</div>
           <div style={{ margin: '5px 0' }}>
-            (&nbsp;&nbsp;&nbsp;) เห็นสมควรอนุญาติ &nbsp;&nbsp;&nbsp; (&nbsp;&nbsp;&nbsp;) เพื่อโปรดพิจารณาสั่งการ &nbsp;&nbsp;&nbsp; (&nbsp;&nbsp;&nbsp;) อื่นๆ ........................................
+            (&nbsp;&nbsp;&nbsp;) เห็นสมควรอนุญาต &nbsp;&nbsp;&nbsp; (&nbsp;&nbsp;&nbsp;) เพื่อโปรดพิจารณาสั่งการ &nbsp;&nbsp;&nbsp; (&nbsp;&nbsp;&nbsp;) อื่นๆ ........................................
           </div>
           <div style={{ marginBottom: '5px' }}>................................................................................................................................</div>
           <div>
-            รถยนต์หมายเลขทะเบียน <span style={{ borderBottom: '1px dotted #000', padding: '0 10px' }}>{data.VehicleReg || '........................'}</span> &nbsp;
-            โดยให้ผู้ขับคือ <span style={{ borderBottom: '1px dotted #000', padding: '0 10px' }}>{data.DriverName || '........................'}</span>
+            รถยนต์หมายเลขทะเบียน <span>{data.VehicleReg || '........................'}</span> &nbsp;
+            โดยให้ผู้ขับคือ <span>{data.DriverName || '........................'}</span>
           </div>
         </div>
 
@@ -181,7 +181,7 @@ export default function PrintDocument() {
             <div style={{ textAlign: 'center' }}>
               <div>ลงชื่อ .......................................................</div>
               <div style={{ marginTop: '5px' }}>(นางสุคนธ์ ตีรวัฒนประภา)</div>
-              <div style={{ marginTop: '5px' }}>ผู้อำนวยการโรงเรียนบางปลาม้า “สูงสุมารผดุงวิทย์”</div>
+              <div style={{ marginTop: '5px', fontSize: '13px', whiteSpace: 'nowrap' }}>ผู้อำนวยการโรงเรียนบางปลาม้า “สูงสุมารผดุงวิทย์”</div>
             </div>
           </div>
         </div>

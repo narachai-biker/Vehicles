@@ -5,10 +5,14 @@ import BookingForm from './pages/BookingForm';
 import CalendarView from './pages/CalendarView';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminLogin from './pages/AdminLogin';
+import PrintDocument from './pages/PrintDocument';
 
 function Header() {
   const location = useLocation();
   const isAdminPath = location.pathname.startsWith('/admin');
+  const isPrintPath = location.pathname.startsWith('/print');
+
+  if (isPrintPath) return null;
 
   return (
     <header className="header-glass">
@@ -55,6 +59,7 @@ function App() {
             <Route path="/book" element={<BookingForm />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/print" element={<PrintDocument />} />
           </Routes>
         </main>
       </div>

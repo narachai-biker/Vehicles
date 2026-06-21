@@ -145,20 +145,10 @@ function AdminDashboard() {
 
   const handleDownloadPdf = async (booking) => {
     try {
-      alert('กำลังสร้างไฟล์ PDF กรุณารอสักครู่ (อาจใช้เวลาประมาณ 5-10 วินาที)...');
-      const res = await fetch(SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: 'exportPdf', data: booking })
-      }).then(r => r.json());
-      
-      if (res.status === 'success' && res.data && res.data.pdfUrl) {
-        window.open(res.data.pdfUrl, '_blank');
-      } else {
-        alert('เกิดข้อผิดพลาดในการสร้าง PDF: ' + (res.message || JSON.stringify(res)));
-      }
+      localStorage.setItem('printData', JSON.stringify(booking));
+      window.open('/print', '_blank');
     } catch (err) {
-      alert('ไม่สามารถติดต่อเซิร์ฟเวอร์ได้');
+      alert('เกิดข้อผิดพลาดในการเปิดหน้าพิมพ์');
     }
   };
 

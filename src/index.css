@@ -248,3 +248,35 @@ textarea.form-control {
   overflow: hidden;
   touch-action: none; /* Prevent scrolling when drawing on mobile */
 }
+
+/* Print Styles */
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: white !important;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-container {
+    background-color: white !important;
+    padding: 0 !important;
+  }
+  
+  .print-page {
+    box-shadow: none !important;
+    width: 210mm !important;
+    height: 297mm !important;
+    padding: 20mm !important;
+    margin: 0 !important;
+    page-break-after: always;
+  }
+}

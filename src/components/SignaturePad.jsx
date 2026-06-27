@@ -1,8 +1,27 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import SignatureCanvas from 'react-signature-canvas';
 
 function SignaturePad({ onEnd }) {
   const sigPad = useRef({});
+  const wrapperRef = useRef(null);
+
+  const resizeCanvas = () => {
+    if (sigPad.current && wrapperRef.current) {
+      const canvas = sigPad.current.getCanvas();
+      const ratio = Math.max(window.devicePixelRatio || 1, 1);
+      canvas.width = wrapperRef.current.offsetWidth * ratio;
+      canvas.height = wrapperRef.current.offsetHeight * ratio;
+      canvas.getContext("2d").scale(ratio, ratio);
+      sigPad.current.clear();
+      onEnd('');
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", resizeCanvas);
+    setTimeout(resizeCanvas, 100); 
+    return () => window.removeEventListener("resize", resizeCanvas);
+  }, []);
 
   const clear = () => {
     sigPad.current.clear();
@@ -19,22 +38,23 @@ function SignaturePad({ onEnd }) {
       onEnd(dataURL);
     } catch (e) {
       console.error("Signature error:", e);
-      // Fallback
       onEnd('error-or-placeholder');
     }
   };
 
   return (
     <div className="signature-wrapper">
-      <div className="signature-container" style={{ border: '2px dashed #cbd5e1', backgroundColor: '#f8fafc', borderRadius: '0.5rem', overflow: 'hidden' }}>
+      <div 
+        ref={wrapperRef}
+        className="signature-container" 
+        style={{ border: '2px dashed #cbd5e1', backgroundColor: '#f8fafc', borderRadius: '0.5rem', overflow: 'hidden', height: '200px', width: '100%' }}
+      >
         <SignatureCanvas 
           ref={sigPad}
           penColor="black"
           canvasProps={{
-            width: 500, 
-            height: 200, 
             className: 'sigCanvas',
-            style: { width: '100%', height: '200px', cursor: 'crosshair' }
+            style: { width: '100%', height: '100%', cursor: 'crosshair', display: 'block' }
           }}
           onEnd={handleEnd}
         />

@@ -23,22 +23,31 @@ const formatTime = (timeStr) => {
   return timeStr;
 };
 
-const isMatchDate = (dateString, targetDateObj) => {
-  if (!dateString) return false;
+const isMatchDate = (startDateStr, endDateStr, targetDateObj) => {
+  if (!startDateStr) return false;
   
-  let d;
-  const str = String(dateString);
-  if (str.includes('T')) {
-    d = new Date(str);
-  } else {
-    d = new Date(str.replace(/-/g, '/'));
-  }
+  const parseDate = (dateString) => {
+    if (!dateString) return null;
+    let d;
+    const str = String(dateString);
+    if (str.includes('T')) {
+      d = new Date(str);
+    } else {
+      d = new Date(str.replace(/-/g, '/'));
+    }
+    return isNaN(d) ? null : d;
+  };
+
+  const start = parseDate(startDateStr);
+  const end = parseDate(endDateStr) || start;
   
-  if (isNaN(d)) return false;
+  if (!start) return false;
+
+  const target = new Date(targetDateObj.getFullYear(), targetDateObj.getMonth(), targetDateObj.getDate());
+  const startDay = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+  const endDay = new Date(end.getFullYear(), end.getMonth(), end.getDate());
   
-  return d.getFullYear() === targetDateObj.getFullYear() &&
-         d.getMonth() === targetDateObj.getMonth() &&
-         d.getDate() === targetDateObj.getDate();
+  return target >= startDay && target <= endDay;
 };
 
 function CalendarView() {
@@ -56,6 +65,7 @@ function CalendarView() {
           const trips = res.data.map(b => ({
             id: b.BookingID,
             date: b.StartDate,
+            endDate: b.EndDate,
             time: `${formatTime(b.StartTime)} - ${formatTime(b.EndTime)}`,
             dest: b.Destination,
             van: b.VehicleReg || 'ไม่ระบุรถ',
@@ -125,7 +135,7 @@ function CalendarView() {
         const cloneDay = day;
         
         // Find trips for this day to show dot indicators (exclude Cancelled and Rejected)
-        const dayTrips = upcomingTrips.filter(t => isMatchDate(t.date, cloneDay) && t.status !== 'Cancelled' && t.status !== 'Rejected');
+        const dayTrips = upcomingTrips.filter(t => isMatchDate(t.date, t.endDate, cloneDay) && t.status !== 'Cancelled' && t.status !== 'Rejected');
         // Show car dots for all valid trips.
         const uniqueVans = [...new Set(dayTrips.map(t => t.van))];
 
@@ -193,7 +203,7 @@ function CalendarView() {
     return <div>{rows}</div>;
   };
 
-  const selectedDayTrips = upcomingTrips.filter(t => isMatchDate(t.date, selectedDate));
+  const selectedDayTrips = upcomingTrips.filter(t => isMatchDate(t.date, t.endDate, selectedDate));
   selectedDayTrips.sort((a, b) => a.time.localeCompare(b.time)); // Sort by time
 
   return (

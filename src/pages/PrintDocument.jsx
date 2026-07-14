@@ -7,7 +7,8 @@ const formatThaiDateFull = (dateStr) => {
     const d = new Date(dateStr);
     if (isNaN(d.getTime())) return dateStr;
     const months = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
-    return `${d.getDate()} ${months[d.getMonth()]} พ.ศ. ${d.getFullYear() + 543}`;
+    const thYear = d.getFullYear() >= 2500 ? d.getFullYear() : d.getFullYear() + 543;
+    return `${d.getDate()} ${months[d.getMonth()]} พ.ศ. ${thYear}`;
   } catch(e) {
     return dateStr;
   }

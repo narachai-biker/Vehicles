@@ -124,9 +124,9 @@ function CalendarView() {
         formattedDate = format(day, 'd');
         const cloneDay = day;
         
-        // Find trips for this day to show dot indicators
-        const dayTrips = upcomingTrips.filter(t => isMatchDate(t.date, cloneDay));
-        // Show car dots for all trips. Pending trips will use the default color.
+        // Find trips for this day to show dot indicators (exclude Cancelled and Rejected)
+        const dayTrips = upcomingTrips.filter(t => isMatchDate(t.date, cloneDay) && t.status !== 'Cancelled' && t.status !== 'Rejected');
+        // Show car dots for all valid trips.
         const uniqueVans = [...new Set(dayTrips.map(t => t.van))];
 
         const isSelected = isSameDay(day, selectedDate);
@@ -253,6 +253,9 @@ function CalendarView() {
                 } else if (trip.status === 'Rejected') {
                   borderColor = '#DC2626'; // Red
                   statusBadge = <span className="badge badge-danger text-xs">ไม่อนุมัติ</span>;
+                } else if (trip.status === 'Cancelled') {
+                  borderColor = '#9CA3AF'; // Gray
+                  statusBadge = <span className="badge badge-secondary text-xs" style={{ backgroundColor: '#9CA3AF', color: '#fff', padding: '0.25rem 0.5rem', borderRadius: '9999px' }}>ยกเลิกแล้ว</span>;
                 } else {
                   statusBadge = <span className="badge badge-approved text-xs">อนุมัติแล้ว</span>;
                 }
@@ -288,6 +291,11 @@ function CalendarView() {
                       <div className="flex items-start gap-2 text-danger">
                         <Info size={16} className="mt-0.5" /> 
                         <span><strong>เหตุผล:</strong> {trip.rejectReason}</span>
+                      </div>
+                    ) : trip.status === 'Cancelled' ? (
+                      <div className="flex items-start gap-2 text-muted" style={{ color: '#9CA3AF' }}>
+                        <Info size={16} className="mt-0.5" /> 
+                        <span>รายการนี้ถูกยกเลิกแล้ว</span>
                       </div>
                     ) : (
                       <div className="flex items-start gap-2 text-warning">
